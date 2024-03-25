@@ -1,11 +1,12 @@
 {
-  "name": "contact-list-react-redux-ts-styledcomponents",
+  "name": "contact-list",
   "version": "1.0.0",
   "description": "This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "react-scripts start"
   },
+  "test": "echo \"Error: no test specified\" && exit 1",
   "author": "schorchi",
   "license": "ISC",
   "dependencies": {
@@ -14,5 +15,6 @@
     "react-dom": "^18.2.0",
     "react-redux": "^9.1.0",
     "redux": "^5.0.1"
-  }
+  },
+  "devDependencies": {}
 }
