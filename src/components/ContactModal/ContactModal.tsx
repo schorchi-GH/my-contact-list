@@ -75,11 +75,16 @@ const ContactModal: React.FC<ContactModalProps> = ({ contactIdToEdit, closeModal
             <input type="email" name="email" value={contactData.email} onChange={handleInputChange} placeholder="Email" className="modal-input" />
             <input type="tel" name="phone" value={contactData.phone} onChange={handleInputChange} placeholder="Phone" className="modal-input" />
             <input type="text" name="location" value={contactData.location} onChange={handleInputChange} placeholder="Location" className="modal-input" />
-            <select name="gender" value={contactData.gender} onChange={handleInputChange} className="modal-input">
-              <option value="Male">Male</option>
-              <option value="Female">Female</option>
-              <option value="Non-binary">Non-binary</option>
-            </select>
+            <select
+  name="gender"
+  value={contactData.gender}
+  onChange={handleInputChange}
+  className="modal-input select-dropdown"
+>
+  <option value="Male">Male</option>
+  <option value="Female">Female</option>
+  <option value="Non-binary">Non-binary</option>
+</select>
           </div>
           <Button type="submit" isIcon={true} value="Save">Save</Button>
         </form>

@@ -82,6 +82,18 @@
   color: #000;
   box-sizing: border-box;
   appearance: none;
+
+  .select-dropdown {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background: url('https://icons8.com/icon/JOdPMDjcwcHo/drop-down') no-repeat right; // Add your dropdown arrow image
+    background-size: 12px 12px;
+    background-position: right 10px center; 
+  }
+
+  cursor: pointer;
+  border-color: #15f4ee;
 }
 
 .MuiSvgIcon-root.save-icon {
