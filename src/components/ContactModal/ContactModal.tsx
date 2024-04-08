@@ -68,20 +68,20 @@ const ContactModal: React.FC<ContactModalProps> = ({ contactIdToEdit, closeModal
           </div>
           <label className="modal-label upload">
             <img src={upload} alt="Upload avatar" className="upload-image-icon" />
-            <input type="file" accept="image/*" style={{ display: 'none' }} onChange={handleUploadFile} />
+            <input type="file" accept="image/*" onChange={handleUploadFile} hidden />
           </label>
           <div className="form-fields">
-            <input type="text" name="name" value={contactData.name} onChange={handleInputChange} placeholder="Name" />
-            <input type="email" name="email" value={contactData.email} onChange={handleInputChange} placeholder="Email" />
-            <input type="tel" name="phone" value={contactData.phone} onChange={handleInputChange} placeholder="Phone" />
-            <input type="text" name="location" value={contactData.location} onChange={handleInputChange} placeholder="Location" />
-            <select name="gender" value={contactData.gender} onChange={handleInputChange}>
+            <input type="text" name="name" value={contactData.name} onChange={handleInputChange} placeholder="Name" className="modal-input" />
+            <input type="email" name="email" value={contactData.email} onChange={handleInputChange} placeholder="Email" className="modal-input" />
+            <input type="tel" name="phone" value={contactData.phone} onChange={handleInputChange} placeholder="Phone" className="modal-input" />
+            <input type="text" name="location" value={contactData.location} onChange={handleInputChange} placeholder="Location" className="modal-input" />
+            <select name="gender" value={contactData.gender} onChange={handleInputChange} className="modal-input">
               <option value="Male">Male</option>
               <option value="Female">Female</option>
               <option value="Non-binary">Non-binary</option>
             </select>
           </div>
-          <Button type="submit" value="Save" isIcon={true}>Save</Button>
+          <Button type="submit" isIcon={true} value="Save">Save</Button>
         </form>
       </div>
     </div>

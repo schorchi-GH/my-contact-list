@@ -57,29 +57,31 @@
 .modal-label.upload {
   justify-content: center;
   margin-top: 20px;
-}
-
-.upload-image {
-  width: 40px;
-  height: 40px;
-  margin: 0 auto;
   cursor: pointer;
 }
 
 .upload-image-icon {
   width: 80px;
   height: 80px;
+  margin: 0 auto;
+  transition: transform 0.3s ease;
+  &:hover {
+    transform: scale(1.1);
+  }
 }
 
 .modal-input {
   font-size: 16px;
   width: 100%;
-  outline: none;
-  border: 0.1px solid;
-  border-radius: 6px;
-  margin-left: 0;
-  margin-bottom: 10px;
-  padding: 3px 10px;
+  height: 40px;
+  margin-top: 20px;
+  border-radius: 25px;
+  padding: 0 15px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  color: #000;
+  box-sizing: border-box;
+  appearance: none;
 }
 
 .MuiSvgIcon-root.save-icon {
@@ -90,8 +92,8 @@
 
 .img-preview-wrapper {
   text-align: center;
-  margin-bottom: 20px;
-
+  margin-bottom: 40px;
+  
   img {
     width: 90px;
     height: 90px;
