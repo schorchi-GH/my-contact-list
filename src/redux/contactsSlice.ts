@@ -1,59 +1,48 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { ContactDataType } from '../types/contactTypes';
-import uniqueId from 'lodash/uniqueId';
 
-const SLICE_NAME = 'contacts';
-
-type InitialState = {
-  contacts: ContactDataType[];
-};
-
-export const initialContact = {
-  id: '',
-  name: 'John Doe',
-  gender: 'Male / Female',
-  location: 'Planet Earth',
-  email: 'example@gmail.com',
-  phone: '+0-000-000-00-00',
-  picture: { large: 'https://randomuser.me/api/portraits/women/1.jpg' },
-};
-
-const initialState: InitialState = {
-  contacts: Array.from({ length: 10 }, () => ({
-    ...initialContact,
-    id: uniqueId(),
-  })),
+const initialState = {
+  contacts: [
+    {
+      id: '1',
+      name: 'João Silva',
+      gender: 'Male',
+      location: 'São Paulo',
+      email: 'joao.silva@example.com.br',
+      phone: '+55-11-98765-4321',
+      picture: { large: 'https://randomuser.me/api/portraits/men/30.jpg' },
+    },
+    {
+      id: '2',
+      name: 'Maria Oliveira',
+      gender: 'Female',
+      location: 'Rio de Janeiro',
+      email: 'maria.oliveira@example.com.br',
+      phone: '+55-21-97654-3210',
+      picture: { large: 'https://randomuser.me/api/portraits/women/29.jpg' },
+    },
+  ],
 };
 
 const contactsSlice = createSlice({
-  name: SLICE_NAME,
+  name: 'contacts',
   initialState,
   reducers: {
-    setContactsData: (state, { payload }: PayloadAction<ContactDataType[]>) => {
-      state.contacts = payload;
+    setContactsData(state, action: PayloadAction<ContactDataType[]>) {
+      state.contacts = action.payload;
     },
-    deleteContact: (state, { payload }: PayloadAction<{ id: string }>) => {
-      const newContact = state.contacts.filter((contact) => contact.id !== payload.id);
-      return { contacts: newContact };
+    deleteContact(state, action: PayloadAction<string>) {
+      state.contacts = state.contacts.filter(contact => contact.id !== action.payload);
     },
-    updateContactData: (state, { payload: editedContact }) => {
-      return {
-        ...state,
-        contacts: state.contacts.map((contact) => {
-          if (contact.id === editedContact.id) {
-            return editedContact;
-          }
-          return contact;
-        }),
-      };
+    updateContactData(state, action: PayloadAction<ContactDataType>) {
+      state.contacts = state.contacts.map(contact => contact.id === action.payload.id ? action.payload : contact);
     },
-    addNewContact: (state, { payload: newContact }) => {
-      state.contacts.push({ ...newContact, id: uniqueId() });
+    addNewContact(state, action: PayloadAction<Omit<ContactDataType, 'id'>>) {
+      const newId = String(Math.max(0, ...state.contacts.map(contact => parseInt(contact.id, 10))) + 1);
+      state.contacts.push({ ...action.payload, id: newId });
     },
   },
 });
 
-export const { setContactsData, deleteContact, updateContactData, addNewContact } =
-  contactsSlice.actions;
-
+export const { setContactsData, deleteContact, updateContactData, addNewContact } = contactsSlice.actions;
 export default contactsSlice.reducer;

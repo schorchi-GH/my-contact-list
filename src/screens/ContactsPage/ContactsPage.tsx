@@ -15,7 +15,7 @@ import Modal from "../../components/Modal/Modal";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import SvgIcon from "@mui/material/SvgIcon";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
-import { ContactModal } from "../../components/ContactModal/ContactModal";
+import ContactModal from '../../components/ContactModal/ContactModal';
 import "./ContactsPage.scss";
 
 export const ContactsPage: FC = () => {

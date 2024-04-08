@@ -20,17 +20,11 @@ export const Button = ({
   onClick,
   value,
   children,
-  type,
+  type = "button",
   isIcon,
-}: ButtonProps) => {
-  return (
-    <button className="button" onClick={onClick} value={value} type={type}>
-      {children}
-      {isIcon && (
-        <SvgIcon className="edit-icon">
-          {ButtonIcon[value as keyof typeof ButtonIcon]}
-        </SvgIcon>
-      )}
-    </button>
-  );
-};
+}: ButtonProps) => (
+  <button className="button" onClick={onClick} value={value} type={type}>
+    {children}
+    {isIcon && <SvgIcon className="button-icon">{ButtonIcon[value as keyof typeof ButtonIcon]}</SvgIcon>}
+  </button>
+);

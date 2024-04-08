@@ -1,15 +1,10 @@
-import { ChangeEvent, SyntheticEvent, useEffect, useState } from "react";
-import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { addNewContact, updateContactData } from "../../redux/contactsSlice";
-import "./ContactModal.scss";
-import { Button } from "../Buttons/Button/Button";
-import upload from "../../assets/upload.png";
-import { ContactActions } from "../../types/contactTypes";
-
-const saveDataActions = {
-  [ContactActions.Edit]: updateContactData,
-  [ContactActions.Add]: addNewContact,
-};
+import React, { ChangeEvent, SyntheticEvent, useEffect, useState } from 'react';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import { addNewContact, updateContactData } from '../../redux/contactsSlice';
+import './ContactModal.scss';
+import { Button } from '../Buttons/Button/Button';
+import upload from '../../assets/upload.png';
+import { ContactActions, ContactDataType } from '../../types/contactTypes';
 
 interface ContactModalProps {
   contactIdToEdit?: string;
@@ -17,178 +12,83 @@ interface ContactModalProps {
   type: ContactActions;
 }
 
-const emptyContactData = {
-  name: "",
-  email: "",
-  phone: "",
-  location: "",
-  picture: {
-    large: "",
-  },
-};
-
-const imageMimeType = /image\/(png|jpg|jpeg)/i;
-
-export const ContactModal = ({
-  contactIdToEdit,
-  closeModal,
-  type,
-}: ContactModalProps) => {
+const ContactModal: React.FC<ContactModalProps> = ({ contactIdToEdit, closeModal, type }) => {
   const dispatch = useAppDispatch();
-
-  const selectedContact = useAppSelector((state) =>
-    state.users.contacts.find((contact) => contact.id === contactIdToEdit)
+  const selectedContact = useAppSelector(state =>
+    state.users.contacts.find(contact => contact.id === contactIdToEdit),
   );
-
-  const [contactData, setContactData] = useState(
-    type === ContactActions.Edit
-      ? selectedContact || emptyContactData
-      : emptyContactData
-  );
-
-  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
-    setContactData({ ...contactData, [name]: value });
-  };
-
+  const [contactData, setContactData] = useState<ContactDataType>(selectedContact || {
+    id: '',
+    name: '',
+    email: '',
+    phone: '',
+    location: '',
+    gender: 'Non-binary',
+    picture: { large: '' },
+  });
   const [file, setFile] = useState<File | null>(null);
-  const [fileDataURL, setFileDataURL] = useState<ArrayBuffer | string | null>(
-    null
-  );
-
-  const handleUploadFile = (e: ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files) return;
-    const file = e.target.files[0];
-    if (!file.type.match(imageMimeType)) {
-      alert("Image mime type is not valid");
-      return;
-    }
-    setFile(file);
-  };
 
   useEffect(() => {
-    let fileReader: FileReader,
-      isCancel = false;
-    if (file) {
-      fileReader = new FileReader();
-      fileReader.onload = (e) => {
-        if (e.target) {
-          const { result } = e.target;
-          if (result && !isCancel) {
-            setFileDataURL(result);
-            setContactData({
-              ...contactData,
-              picture: { large: String(result) },
-            });
-          }
-        }
-      };
-      fileReader.readAsDataURL(file);
-    }
-
-    return () => {
-      isCancel = true;
-      if (fileReader && fileReader.readyState === 1) {
-        fileReader.abort();
-      }
+    if (!file) return;
+    const fileReader = new FileReader();
+    fileReader.onload = () => {
+      setContactData(prev => ({ ...prev, picture: { large: fileReader.result as string } }));
     };
-  }, [file, contactData]);
+    fileReader.readAsDataURL(file);
+  }, [file]);
+
+  const handleUploadFile = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setFile(e.target.files[0]);
+    }
+  };
+
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target as HTMLInputElement; // Type assertion
+    setContactData(prev => ({ ...prev, [name]: value }));
+  };
 
   const saveDataHandler = (e: SyntheticEvent) => {
     e.preventDefault();
-
-    dispatch(saveDataActions[type]({ ...contactData }));
-
+    if (type === ContactActions.Add) {
+      dispatch(addNewContact(contactData));
+    } else if (type === ContactActions.Edit && contactIdToEdit) {
+      dispatch(updateContactData({ ...contactData, id: contactIdToEdit }));
+    }
     closeModal();
-  };
-
-  const modalTitle = {
-    [ContactActions.Edit]: "Contact profile",
-    [ContactActions.Add]: "New Contact",
   };
 
   return (
     <div className="modal-content">
       <div className="edit-modal-header">
-        <p className="modal-title">{modalTitle[type]}</p>
+        <p className="modal-title">{type === ContactActions.Edit ? 'Edit Contact' : 'Add New Contact'}</p>
+        <button onClick={closeModal} className="close-modal-button">Close</button>
       </div>
       <div className="modal-body">
-        <form onSubmit={saveDataHandler}>
-          {type === ContactActions.Add &&
-            (fileDataURL ? (
-              <div className="img-preview-wrapper">
-                {<img src={String(fileDataURL)} alt="preview" />}
-              </div>
-            ) : (
-              <label htmlFor="file" className="modal-label upload">
-                <img
-                  src={upload}
-                  alt="Upload avatar"
-                  className="upload-image"
-                />
-                <input
-                  type="file"
-                  id="file"
-                  name="image"
-                  accept="image/*"
-                  style={{ display: "none" }}
-                  onChange={handleUploadFile}
-                />
-              </label>
-            ))}
-          <label htmlFor="Name" className="modal-label">
-            Name:
-            <input
-              type="text"
-              id="name"
-              name="name"
-              className="modal-input"
-              value={contactData.name}
-              onChange={handleChange}
-              required
-            />
+        <form onSubmit={saveDataHandler} className="contact-form">
+          <div className="img-preview-wrapper">
+            {contactData.picture.large && <img src={contactData.picture.large} alt="preview" className="contact-image-preview" />}
+          </div>
+          <label className="modal-label upload">
+            <img src={upload} alt="Upload avatar" className="upload-image-icon" />
+            <input type="file" accept="image/*" style={{ display: 'none' }} onChange={handleUploadFile} />
           </label>
-          <label htmlFor="Email" className="modal-label">
-            Email:
-            <input
-              type="email"
-              id="email"
-              name="email"
-              className="modal-input"
-              value={contactData.email}
-              onChange={handleChange}
-              required
-            />
-          </label>
-          <label htmlFor="Phone" className="modal-label">
-            Phone:
-            <input
-              type="text"
-              id="phone"
-              name="phone"
-              className="modal-input"
-              value={contactData.phone}
-              onChange={handleChange}
-              required
-            />
-          </label>
-          <label htmlFor="Location" className="modal-label">
-            Location:
-            <input
-              type="text"
-              id="location"
-              name="location"
-              className="modal-input"
-              value={contactData.location}
-              onChange={handleChange}
-              required
-            />
-          </label>
-          <Button type="submit" value="Save" isIcon>
-            Save
-          </Button>
+          <div className="form-fields">
+            <input type="text" name="name" value={contactData.name} onChange={handleInputChange} placeholder="Name" />
+            <input type="email" name="email" value={contactData.email} onChange={handleInputChange} placeholder="Email" />
+            <input type="tel" name="phone" value={contactData.phone} onChange={handleInputChange} placeholder="Phone" />
+            <input type="text" name="location" value={contactData.location} onChange={handleInputChange} placeholder="Location" />
+            <select name="gender" value={contactData.gender} onChange={handleInputChange}>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Non-binary">Non-binary</option>
+            </select>
+          </div>
+          <Button type="submit" value="Save" isIcon={true}>Save</Button>
         </form>
       </div>
     </div>
   );
 };
+
+export default ContactModal;

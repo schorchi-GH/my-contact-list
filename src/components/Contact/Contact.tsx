@@ -33,7 +33,7 @@ export const Contact: FC<ContactProps> = ({
   const dispatch = useAppDispatch();
 
   const handleDeleteContact = useCallback(() => {
-    dispatch(deleteContact({ id }));
+    dispatch(deleteContact(id));
   }, [id, dispatch]);
 
   return (
