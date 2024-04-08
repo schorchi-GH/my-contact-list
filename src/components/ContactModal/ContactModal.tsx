@@ -14,9 +14,7 @@ interface ContactModalProps {
 
 const ContactModal: React.FC<ContactModalProps> = ({ contactIdToEdit, closeModal, type }) => {
   const dispatch = useAppDispatch();
-  const selectedContact = useAppSelector(state =>
-    state.users.contacts.find(contact => contact.id === contactIdToEdit),
-  );
+  const selectedContact = useAppSelector(state => state.users.contacts.find(contact => contact.id === contactIdToEdit));
   const [contactData, setContactData] = useState<ContactDataType>(selectedContact || {
     id: '',
     name: '',
@@ -44,7 +42,7 @@ const ContactModal: React.FC<ContactModalProps> = ({ contactIdToEdit, closeModal
   };
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target as HTMLInputElement; // Type assertion
+    const { name, value } = e.target as HTMLInputElement;
     setContactData(prev => ({ ...prev, [name]: value }));
   };
 
@@ -62,7 +60,7 @@ const ContactModal: React.FC<ContactModalProps> = ({ contactIdToEdit, closeModal
     <div className="modal-content">
       <div className="edit-modal-header">
         <p className="modal-title">{type === ContactActions.Edit ? 'Edit Contact' : 'Add New Contact'}</p>
-        <button onClick={closeModal} className="close-modal-button">Close</button>
+        <button onClick={closeModal} className="close-modal-button">X</button>
       </div>
       <div className="modal-body">
         <form onSubmit={saveDataHandler} className="contact-form">
