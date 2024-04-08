@@ -60,7 +60,6 @@ const ContactModal: React.FC<ContactModalProps> = ({ contactIdToEdit, closeModal
     <div className="modal-content">
       <div className="edit-modal-header">
         <p className="modal-title">{type === ContactActions.Edit ? 'Edit Contact' : 'Add New Contact'}</p>
-        <button onClick={closeModal} className="close-modal-button">X</button>
       </div>
       <div className="modal-body">
         <form onSubmit={saveDataHandler} className="contact-form">
