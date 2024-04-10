@@ -1,20 +1,79 @@
+// ContactModal.tsx
 import React, { ChangeEvent, SyntheticEvent, useEffect, useState } from 'react';
+import styled from 'styled-components';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { addNewContact, updateContactData } from '../../redux/contactsSlice';
-import './ContactModal.scss';
 import { Button } from '../Buttons/Button/Button';
-import upload from '../../assets/upload.png';
 import { ContactActions, ContactDataType } from '../../types/contactTypes';
 
+import uploadIcon from '../../assets/upload.png';
+
+// Styled components
+const ModalOverlay = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+`;
+
+const ModalBox = styled.div`
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 5px;
+`;
+
+const ModalHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+`;
+
+const ModalTitle = styled.h2`
+  margin: 0;
+`;
+
+const ModalBody = styled.div`
+  margin-top: 20px;
+`;
+
+const ModalFooter = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+`;
+
+const InputField = styled.input`
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+`;
+
+const Label = styled.label`
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+`;
+
+// Componente ContactModal
 interface ContactModalProps {
   contactIdToEdit?: string;
   closeModal: () => void;
   type: ContactActions;
 }
 
-const ContactModal: React.FC<ContactModalProps> = ({ contactIdToEdit, closeModal, type }) => {
+export const ContactModal: React.FC<ContactModalProps> = ({ contactIdToEdit, closeModal, type }) => {
   const dispatch = useAppDispatch();
-  const selectedContact = useAppSelector(state => state.users.contacts.find(contact => contact.id === contactIdToEdit));
+  const selectedContact = useAppSelector(state =>
+    state.users.contacts.find(contact => contact.id === contactIdToEdit)
+  );
+
   const [contactData, setContactData] = useState<ContactDataType>(selectedContact || {
     id: '',
     name: '',
@@ -24,72 +83,40 @@ const ContactModal: React.FC<ContactModalProps> = ({ contactIdToEdit, closeModal
     gender: 'Non-binary',
     picture: { large: '' },
   });
-  const [file, setFile] = useState<File | null>(null);
 
-  useEffect(() => {
-    if (!file) return;
-    const fileReader = new FileReader();
-    fileReader.onload = () => {
-      setContactData(prev => ({ ...prev, picture: { large: fileReader.result as string } }));
-    };
-    fileReader.readAsDataURL(file);
-  }, [file]);
-
-  const handleUploadFile = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setFile(e.target.files[0]);
-    }
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setContactData({ ...contactData, [name]: value });
   };
 
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target as HTMLInputElement;
-    setContactData(prev => ({ ...prev, [name]: value }));
-  };
-
-  const saveDataHandler = (e: SyntheticEvent) => {
+  const handleSubmit = (e: SyntheticEvent) => {
     e.preventDefault();
     if (type === ContactActions.Add) {
       dispatch(addNewContact(contactData));
-    } else if (type === ContactActions.Edit && contactIdToEdit) {
-      dispatch(updateContactData({ ...contactData, id: contactIdToEdit }));
+    } else {
+      dispatch(updateContactData(contactData));
     }
     closeModal();
   };
 
   return (
-    <div className="modal-content">
-      <div className="edit-modal-header">
-        <p className="modal-title">{type === ContactActions.Edit ? 'Edit Contact' : 'Add New Contact'}</p>
-      </div>
-      <div className="modal-body">
-        <form onSubmit={saveDataHandler} className="contact-form">
-          <div className="img-preview-wrapper">
-            {contactData.picture.large && <img src={contactData.picture.large} alt="preview" className="contact-image-preview" />}
-          </div>
-          <label className="modal-label upload">
-            <img src={upload} alt="Upload avatar" className="upload-image-icon" />
-            <input type="file" accept="image/*" onChange={handleUploadFile} hidden />
-          </label>
-          <div className="form-fields">
-            <input type="text" name="name" value={contactData.name} onChange={handleInputChange} placeholder="Name" className="modal-input" />
-            <input type="email" name="email" value={contactData.email} onChange={handleInputChange} placeholder="Email" className="modal-input" />
-            <input type="tel" name="phone" value={contactData.phone} onChange={handleInputChange} placeholder="Phone" className="modal-input" />
-            <input type="text" name="location" value={contactData.location} onChange={handleInputChange} placeholder="Location" className="modal-input" />
-            <select
-  name="gender"
-  value={contactData.gender}
-  onChange={handleInputChange}
-  className="modal-input select-dropdown"
->
-  <option value="Male">Male</option>
-  <option value="Female">Female</option>
-  <option value="Non-binary">Non-binary</option>
-</select>
-          </div>
-          <Button type="submit" isIcon={true} value="Save">Save</Button>
+    <ModalOverlay>
+      <ModalBox>
+        <ModalHeader>
+          <ModalTitle>{type === ContactActions.Edit ? 'Edit Contact' : 'Add New Contact'}</ModalTitle>
+          <Button onClick={closeModal}>Close</Button>
+        </ModalHeader>
+        <form onSubmit={handleSubmit}>
+          <ModalBody>
+            <Label htmlFor="name">Name</Label>
+            <InputField id="name" name="name" value={contactData.name} onChange={handleInputChange} />
+          </ModalBody>
+          <ModalFooter>
+            <Button type="submit">Save</Button>
+          </ModalFooter>
         </form>
-      </div>
-    </div>
+      </ModalBox>
+    </ModalOverlay>
   );
 };
 

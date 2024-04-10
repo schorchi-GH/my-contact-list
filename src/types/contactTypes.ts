@@ -19,6 +19,6 @@ export type ContactDataType = {
   };
   
   export enum ContactActions {
-    Edit = 'edit',
-    Add = 'add',
+    Edit = 'Edit',
+    Add = 'Add',
   }
