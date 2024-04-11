@@ -3,11 +3,13 @@ import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import background from '../../assets/background.jpg';
 import { Button } from '../../components/Buttons/Button/Button';
+import doodlingBackground from '../../assets/doodling.webp';
 
-// Styled Components
+
 const LoginPageContainer = styled.div`
   color: #6a6f8c;
-  background: #e9e9e9;
+  background: url(${doodlingBackground}) no-repeat center center fixed;
+  background-size: cover;
   height: 100vh;
   overflow: hidden;
   display: flex;

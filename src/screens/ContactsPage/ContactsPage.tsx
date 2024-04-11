@@ -1,3 +1,4 @@
+// C:\my-contact-list\src\screens\ContactsPage\ContactsPage.tsx
 import React, { FC, useState } from "react";
 import styled from 'styled-components';
 import { Contact } from "../../components/Contact/Contact";
@@ -10,11 +11,30 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import SvgIcon from "@mui/material/SvgIcon";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import ContactModal from '../../components/ContactModal/ContactModal';
+import doodlingBackground from '../../assets/doodling.webp';
 
 const ContactsPageContainer = styled.div`
   overflow: auto;
-  background: #e9e9e9;
+  position: relative;
+  height: 100vh;
+  width: 100vw;
+
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url(${doodlingBackground}) no-repeat center center fixed;
+    background-size: cover;
+    opacity: 0.2;
+    z-index: -1;
+    filter: brightness(20%);
+  }
 `;
+
 
 const ContactsPageHeader = styled.header`
   margin: 30px auto;
